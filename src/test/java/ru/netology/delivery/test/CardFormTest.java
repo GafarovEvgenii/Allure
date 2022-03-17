@@ -32,7 +32,7 @@ public class CardFormTest {
         $("span.checkbox__box").click();
         $(withText("Запланировать")).click();
         $(withText("Успешно!")).shouldBe(visible);
-        $("[data-test-id='success-notification']").shouldBe(visible).shouldHave(Condition.text("Встреча успешно запланирована на " + date));
+        $("[data-test-id='success-notification']").shouldBe(visible).shouldHave(Condition.text("Встреча успешно запланирована на " + date1));
         $("[placeholder='Дата встречи']").doubleClick().sendKeys(Keys.BACK_SPACE);
         String date2 = DataGenerator.getDate();
         $("[data-test-id='date'] input").setValue(date2);
