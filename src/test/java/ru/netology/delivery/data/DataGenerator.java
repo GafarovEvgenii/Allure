@@ -1,33 +1,28 @@
 package ru.netology.delivery.data;
 
 import com.github.javafaker.Faker;
+import lombok.experimental.UtilityClass;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
-import java.util.Random;
 
+@UtilityClass
 public class DataGenerator {
-    public static Faker faker = new Faker(new Locale("ru"));
 
-    public static String getCity() {
-        return faker.address().cityName();
+    @UtilityClass
+    public static class Registration {
+        public RegistrationByCardInfo generateByCard(String locale) {
+            Faker faker = new Faker(new Locale(locale));
+            return new RegistrationByCardInfo(
+                    faker.address().city(),
+                    faker.name().fullName(),
+                    faker.phoneNumber().phoneNumber()
+            );
+        }
     }
-
-
-    public static String getDate() {
-        Random random = new Random();
-        int randomDay = 3 + random.nextInt(362);
-        return LocalDate.now().plusDays(randomDay).format(DateTimeFormatter.ofPattern("dd.MM.yyyy"));
-    }
-
-    public static String getName() {
-        return faker.name().fullName();
-    }
-
-    public static String getPhone() {
-        return faker.phoneNumber().phoneNumber();
-
+    public static String generateDate(int days) {
+        return LocalDate.now().plusDays(days).format(DateTimeFormatter.ofPattern("dd.MM.yyyy"));
     }
 }
 

@@ -4,14 +4,14 @@ import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.Configuration;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.openqa.selenium.Keys;
 import ru.netology.delivery.data.DataGenerator;
+import ru.netology.delivery.data.RegistrationByCardInfo;
 
+import java.time.Duration;
 
-import static com.codeborne.selenide.Condition.visible;
-import static com.codeborne.selenide.Selectors.withText;
-import static com.codeborne.selenide.Selenide.$;
-import static com.codeborne.selenide.Selenide.open;
+import static com.codeborne.selenide.Condition.exactText;
+import static com.codeborne.selenide.Selenide.*;
+import static org.openqa.selenium.Keys.BACK_SPACE;
 
 public class CardFormTest {
     @BeforeEach
@@ -22,24 +22,26 @@ public class CardFormTest {
 
 
     @Test
-    public void shouldRegByAcc() {
-        $("[data-test-id='city'] input").val(DataGenerator.getCity());
-        String date1 = DataGenerator.getDate();
-        $("[placeholder='Дата встречи']").doubleClick().sendKeys(Keys.BACK_SPACE);
-        $("[placeholder='Дата встречи']").setValue(date1);
-        $("[data-test-id='name'] input").val(DataGenerator.getName());
-        $("[data-test-id='phone'] input").val(DataGenerator.getPhone());
-        $("span.checkbox__box").click();
-        $(withText("Запланировать")).click();
-        $(withText("Успешно!")).shouldBe(visible);
-        $("[data-test-id='success-notification']").shouldBe(visible).shouldHave(Condition.text("Встреча успешно запланирована на " + date));
-        $("[placeholder='Дата встречи']").doubleClick().sendKeys(Keys.BACK_SPACE);
-        String date2 = DataGenerator.getDate();
-        $("[data-test-id='date'] input").setValue(date2);
-        $(withText("Запланировать")).click();
-        $(withText("У вас уже запланирована встреча на другую дату. Перепланировать?")).shouldBe(visible);
-        $("[data-test-id=replan-notification] button.button").click();
-        $(withText("Успешно")).shouldBe(visible);
+    void shouldRegisterCard() {
+        RegistrationByCardInfo firstAttempt = DataGenerator.Registration.generateByCard("ru");
+        String firstDate = DataGenerator.generateDate(5);
+        String secondDate = DataGenerator.generateDate(7);
 
+        $("[data-test-id='city'] input").setValue(firstAttempt.getCity());
+        $("[data-test-id='date'] input").doubleClick().sendKeys(BACK_SPACE);
+        $("[data-test-id='date'] input").setValue(firstDate);
+        $("[data-test-id='name'] input").setValue(firstAttempt.getName());
+        $("[data-test-id='phone'] input").setValue(firstAttempt.getPhone());
+        $("[data-test-id='agreement'] .checkbox__text").click();
+        $$(".button__text").find(Condition.text("Запланировать")).click();
+        $(".notification__content").shouldBe(Condition.visible).shouldHave(exactText("Встреча успешно запланирована на " + firstDate), Duration.ofSeconds(15));
+        $(".notification__content").click();
+
+        $("[data-test-id='date'] input").doubleClick().sendKeys(BACK_SPACE);
+        $("[data-test-id='date'] input").setValue(secondDate);
+        $$(".button__text").find(exactText("Запланировать")).click();
+        $("[data-test-id='replan-notification'] .notification__content").shouldBe(Condition.visible).shouldHave(Condition.text("У вас уже запланирована встреча на другую дату. Перепланировать?"));
+        $$(".button__text").find(exactText("Перепланировать")).click();
+        $(".notification__content").shouldBe(Condition.visible).shouldHave(exactText("Встреча успешно запланирована на " + secondDate), Duration.ofSeconds(15));
     }
 }
