@@ -36,7 +36,6 @@ public class CardFormTest {
         $$(".button__text").find(Condition.text("Запланировать")).click();
         $(".notification__content").shouldBe(Condition.visible).shouldHave(exactText("Встреча успешно запланирована на " + firstDate), Duration.ofSeconds(15));
         $(".notification__content").click();
-
         $("[data-test-id='date'] input").doubleClick().sendKeys(BACK_SPACE);
         $("[data-test-id='date'] input").setValue(secondDate);
         $$(".button__text").find(exactText("Запланировать")).click();

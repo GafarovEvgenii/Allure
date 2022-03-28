@@ -1,1 +1,0 @@
-# Patterns 1 [![Build status](https://ci.appveyor.com/api/projects/status/3utcnl17dpeueapn?svg=true)](https://ci.appveyor.com/project/GafarovEvgenii/patterns-1-1)
